@@ -1,0 +1,613 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyPKI3UZIcayGoofqFWekLxp",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/nabinjoshi54/lis5693/blob/main/lab-2\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Lab 2: Text Pre-Processing using spaCy\n",
+        "\n",
+        "In this lab, I load my Lab-1 transcript (`transcript.txt`) directly from my GitHub repository which I completed in Lab-1, then use spaCy to perform sentence segmentation, word counts, frequent word analysis, named entity recognition, and phrase matching."
+      ],
+      "metadata": {
+        "id": "Owq17qkcZkmK"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip -q install spacy\n",
+        "!python -m spacy download en_core_web_sm -q"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "dzu_JXvCZqJp",
+        "outputId": "aecb92b2-47fb-48df-b058-52485c36a361"
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\u001b[?25l     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/12.8 MB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K     \u001b[91m━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.2/12.8 MB\u001b[0m \u001b[31m37.0 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m7.1/12.8 MB\u001b[0m \u001b[31m102.6 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m12.8/12.8 MB\u001b[0m \u001b[31m196.1 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m12.8/12.8 MB\u001b[0m \u001b[31m196.1 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m12.8/12.8 MB\u001b[0m \u001b[31m88.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25h\u001b[38;5;2m✔ Download and installation successful\u001b[0m\n",
+            "You can now load the package via spacy.load('en_core_web_sm')\n",
+            "\u001b[38;5;3m⚠ Restart to reload dependencies\u001b[0m\n",
+            "If you are in a Jupyter or Colab notebook, you may need to restart Python in\n",
+            "order to load all the package's dependencies. You can do this by selecting the\n",
+            "'Restart kernel' or 'Restart runtime' option.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import requests\n",
+        "import spacy\n",
+        "from collections import Counter"
+      ],
+      "metadata": {
+        "id": "AXP3LEaVZ0E_"
+      },
+      "execution_count": 2,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Task 1: Load and read `transcript.txt` from my Lab-1 GitHub repo\n",
+        "\n",
+        "In this step, I download my `transcript.txt` file directly from GitHub using a raw file URL and store it as a Python string."
+      ],
+      "metadata": {
+        "id": "ze5NfSuBZ5k4"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "TRANSCRIPT_URL = \"https://raw.githubusercontent.com/nabinjoshi54/lis5693/refs/heads/main/lab-1/transcript.txt\"\n",
+        "\n",
+        "response = requests.get(TRANSCRIPT_URL)\n",
+        "response.raise_for_status()  # stops if the link is wrong\n",
+        "text = response.text\n",
+        "\n",
+        "print(\"Loaded transcript successfully.\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "k-z_4GrfZ8p5",
+        "outputId": "57d694d4-dd32-42a5-f44f-e9bdf17b3ea6"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Loaded transcript successfully.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Task 2: Character count and first 100 characters\n",
+        "\n",
+        "Here I calculate how many characters are in my transcript and print the first 100 characters to confirm it loaded correctly."
+      ],
+      "metadata": {
+        "id": "k80ra0BgauXr"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(\"Number of characters:\", len(text))\n",
+        "print(\"\\nFirst 100 characters:\\n\")\n",
+        "print(text[:100])"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "suupYCZYawuK",
+        "outputId": "77c7e1b4-36db-4b94-9a71-a1e175280e8f"
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Number of characters: 13171\n",
+            "\n",
+            "First 100 characters:\n",
+            "\n",
+            "Transcriber: Abdulrahman Sallam\n",
+            "Reviewer: Raúl Higareda\n",
+            "(Applause)\n",
+            "I’m going to ask you\n",
+            "to participa\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Task 3: Sentence segmentation using a blank spaCy pipeline\n",
+        "\n",
+        "In this step, I create a blank English spaCy pipeline and add the `sentencizer` component to split the transcript into sentences without a full NLP model."
+      ],
+      "metadata": {
+        "id": "92pEEtuPa2uI"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nlp_blank = spacy.blank(\"en\")\n",
+        "nlp_blank.add_pipe(\"sentencizer\")\n",
+        "\n",
+        "doc_blank = nlp_blank(text)\n",
+        "sentences = list(doc_blank.sents)\n",
+        "\n",
+        "print(\"Number of sentences:\", len(sentences))\n",
+        "print(\"\\nFirst 3 sentences:\\n\")\n",
+        "for s in sentences[:3]:\n",
+        "    print(\"-\", s.text.strip())"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "wLLnlqmda46g",
+        "outputId": "d0a9303c-ef70-4dac-e767-3b189b0beb15"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Number of sentences: 146\n",
+            "\n",
+            "First 3 sentences:\n",
+            "\n",
+            "- Transcriber: Abdulrahman Sallam\n",
+            "Reviewer: Raúl Higareda\n",
+            "(Applause)\n",
+            "I’m going to ask you\n",
+            "to participate in an experiment,\n",
+            "which is that when you leave this room,\n",
+            "when you go out into the world,\n",
+            "today, tomorrow,\n",
+            "or whenever you feel like it,\n",
+            "I’d like you to ask and answer\n",
+            "one question of someone who’s a stranger.\n",
+            "- You might meet them on the bus\n",
+            "or walking down the street.\n",
+            "- I’m going to show you the question\n",
+            "I’m going to ask you to ask and answer.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Task 4: Word count and token analysis\n",
+        "\n",
+        "Here I count total words and unique words. I keep only alphabetic tokens and convert them to lowercase for consistent counting."
+      ],
+      "metadata": {
+        "id": "4OSCCw1ObFPp"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "words = [token.text.lower() for token in doc_blank if token.is_alpha]\n",
+        "\n",
+        "print(\"Total number of words:\", len(words))\n",
+        "print(\"Number of unique words:\", len(set(words)))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "MDE9YpSSbHtZ",
+        "outputId": "7b5cd394-c680-4d69-a9b8-69531da2d856"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Total number of words: 2372\n",
+            "Number of unique words: 569\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Task 5: Most frequent words\n",
+        "\n",
+        "In this step, I find the most frequent words in my transcript. Then I briefly explain why the most frequent word appears often."
+      ],
+      "metadata": {
+        "id": "gLIePPnAbKdo"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "word_freq = Counter(words)\n",
+        "\n",
+        "print(\"Top 10 most frequent words:\")\n",
+        "for w, c in word_freq.most_common(10):\n",
+        "    print(w, \":\", c)\n",
+        "\n",
+        "most_common_word, most_common_count = word_freq.most_common(1)[0]\n",
+        "print(\"\\nMost frequent word:\", most_common_word)\n",
+        "print(\"Count:\", most_common_count)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "1g78K4OGb5Fh",
+        "outputId": "f3164e11-7155-4234-8967-bdb460f88b44"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Top 10 most frequent words:\n",
+            "to : 92\n",
+            "and : 91\n",
+            "you : 68\n",
+            "the : 58\n",
+            "that : 51\n",
+            "they : 50\n",
+            "a : 46\n",
+            "of : 44\n",
+            "this : 42\n",
+            "i : 38\n",
+            "\n",
+            "Most frequent word: to\n",
+            "Count: 92\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Why do this word appears frequently?\n",
+        "\n",
+        "Answer: The most frequent word is 'to'. This word appears often because it is a common preposition and is repeatedly used in everyday speech and helps connect ideas throughout the transcript. As we can see in the result most repetitive words are 'to', 'and', 'you' etc. and all of them are preposition, conjunction and noun pronous which are critical part of every sentence."
+      ],
+      "metadata": {
+        "id": "Y8kxhFu6b9Ox"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Task 6: Run full spaCy pipeline (Named Entity Recognition)\n",
+        "\n",
+        "Here I load the full English spaCy model (`en_core_web_sm`) and extract named entities from the transcript. I report how many entities were found and what entity types appear."
+      ],
+      "metadata": {
+        "id": "RAoKHMZGcUup"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nlp_full = spacy.load(\"en_core_web_sm\")\n",
+        "doc_full = nlp_full(text)\n",
+        "\n",
+        "entities = list(doc_full.ents)\n",
+        "\n",
+        "print(\"Number of named entities found:\", len(entities))\n",
+        "\n",
+        "entity_types = sorted(set([ent.label_ for ent in entities]))\n",
+        "print(\"\\nEntity types found:\")\n",
+        "print(entity_types)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "N7t3-OFAcX95",
+        "outputId": "de5b1bac-b1cb-40b6-b759-5ebdec121c0a"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Number of named entities found: 46\n",
+            "\n",
+            "Entity types found:\n",
+            "['CARDINAL', 'DATE', 'GPE', 'ORDINAL', 'ORG', 'PERSON', 'TIME']\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(\"\\nFirst 20 entities (text -> label):\")\n",
+        "for ent in entities[:20]:\n",
+        "    print(ent.text, \"->\", ent.label_)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "CfZ9-Wz3cq6w",
+        "outputId": "c8745dee-bcf3-4dee-84fe-0dd11d7026f1"
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "First 20 entities (text -> label):\n",
+            "Raúl Higareda -> PERSON\n",
+            "today, tomorrow -> DATE\n",
+            "one -> CARDINAL\n",
+            "A few years ago -> DATE\n",
+            "20 years -> DATE\n",
+            "a long day -> DATE\n",
+            "the New York Times -> ORG\n",
+            "about my day -> DATE\n",
+            "first -> ORDINAL\n",
+            "one -> CARDINAL\n",
+            "one -> CARDINAL\n",
+            "three -> CARDINAL\n",
+            "Behfar Ehdaie -> PERSON\n",
+            "Ehdaie -> PERSON\n",
+            "New York City -> GPE\n",
+            "every single day -> DATE\n",
+            "one -> CARDINAL\n",
+            "Ehdaie -> PERSON\n",
+            "every 6 months -> DATE\n",
+            "every 2 years -> DATE\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Task 7: PhraseMatcher\n",
+        "\n",
+        "For PhraseMatcher, I selected three phrases related to the topic of my Lab-1 YouTube video and searched for them inside my transcript. The code prints each match and the sentence where it appears."
+      ],
+      "metadata": {
+        "id": "R1iBP4vJcvd_"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from spacy.matcher import PhraseMatcher\n",
+        "\n",
+        "matcher = PhraseMatcher(nlp_full.vocab, attr=\"LOWER\")\n",
+        "\n",
+        "# 3 phrases related to my Lab-1 video topic\n",
+        "phrases = [\n",
+        "    \"conversation\",\n",
+        "    \"communication\",\n",
+        "    \"data science\"\n",
+        "]\n",
+        "\n",
+        "patterns = [nlp_full.make_doc(p) for p in phrases]\n",
+        "matcher.add(\"TOPIC_PHRASES\", patterns)\n",
+        "\n",
+        "matches = matcher(doc_full)\n",
+        "\n",
+        "print(\"Total phrase matches found:\", len(matches))\n",
+        "print(\"\\nMatches:\\n\")\n",
+        "\n",
+        "for match_id, start, end in matches:\n",
+        "    span = doc_full[start:end]\n",
+        "    print(\"Matched phrase:\", span.text)\n",
+        "    print(\"Sentence:\", span.sent.text.strip())\n",
+        "    print(\"-\" * 60)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "fFnN9IHscxkJ",
+        "outputId": "ef0d7eaf-3d65-4a6c-e379-b9c2e11d2c61"
+      },
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Total phrase matches found: 19\n",
+            "\n",
+            "Matches:\n",
+            "\n",
+            "Matched phrase: communication\n",
+            "Sentence: And so, I started talking to researchers\n",
+            "who were studying communication.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: communication\n",
+            "Sentence: We’re living through this golden age\n",
+            "of understanding communication,\n",
+            "really for the first time,\n",
+            "because of advances\n",
+            "in neural imaging and data collection.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: They said one of the big things\n",
+            "that we’ve learned\n",
+            "Is that we tend to think of a discussion\n",
+            "as being just one conversation.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: I was coming home and having\n",
+            "an emotional conversation.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: My wife was responding\n",
+            "with a practical conversation.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: They are both legitimate conversations,\n",
+            "but because we weren’t having\n",
+            "the same conversation at the same moment,\n",
+            "we weren’t really communicating\n",
+            "with each other.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: communication\n",
+            "Sentence: And within neurology and psychology,\n",
+            "this insight has become so important\n",
+            "that it’s become known\n",
+            "as the matching principle,\n",
+            "which says that successful communication\n",
+            "requires recognizing what kind\n",
+            "of conversation is occurring\n",
+            "and then matching each other.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: And within neurology and psychology,\n",
+            "this insight has become so important\n",
+            "that it’s become known\n",
+            "as the matching principle,\n",
+            "which says that successful communication\n",
+            "requires recognizing what kind\n",
+            "of conversation is occurring\n",
+            "and then matching each other.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: If you are a school teacher, \n",
+            "you’ll probably learn at some point\n",
+            "that If a student comes to you\n",
+            "with a problem or something to talk about,\n",
+            "you should ask them,\n",
+            "“Do you want to be helped?”\n",
+            "which is a practical conversation.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: “Do you want to be hugged?” which is\n",
+            "an emotional conversation.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: Or “Do you want to be heard?”\n",
+            "which is a social conversation.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: They tend to tell us what they want,\n",
+            "not only out of this conversation,\n",
+            "but how they hope that we’ll see them\n",
+            "and how they want to see us,\n",
+            "what matters to them most.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: And they said, “Well look,\n",
+            "your biggest mistake\n",
+            " is you are starting\n",
+            "this conversation all wrong.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: So two weeks later,\n",
+            "after having this conversation,\n",
+            "a 62-year-old man comes into \n",
+            "Dr. Ehdaie’s office for the first time.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: And at that moment, Dr. Ehdaie realized,\n",
+            "because he had asked this deep question,\n",
+            "that this man wanted to have\n",
+            "an emotional conversation.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: And they move into\n",
+            "a practical conversation together.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: And the thing is, we can do\n",
+            "this in any conversation.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: It doesn’t have to be an\n",
+            "important conversation or life or death.\n",
+            "------------------------------------------------------------\n",
+            "Matched phrase: conversation\n",
+            "Sentence: And that feeling you get\n",
+            "after a wonderful conversation,\n",
+            "that glow that you experience,\n",
+            "our brains have evolved to give us that,\n",
+            "to crave connection.\n",
+            "------------------------------------------------------------\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Task 8: Reflection\n",
+        "\n",
+        "What went well?\n",
+        "Answer: This lab went well because I was able to load my transcript (by copying the raw data link from GitHub) successfully and use spaCy to split sentences, count words, and find frequent words. The spaCy full pipeline also helped me identify named entities and see what types of entities appear in my transcript. Though I created new google colab as instructed in instruction manual in canvas and github, I used the instructions in lab2 (https://github.com/manika-lamba/SP26-LIS4_5693/blob/main/lab-assignments/lab-2/Lab_2.ipynb) to complete lab2.\n",
+        "\n",
+        "What did not go well or challenges?\n",
+        "Answer: The first challenge was making sure I used the correct GitHub raw URL for my `transcript.txt` file, which I did not do initially and copied simple text url. After fixing the file path and running cells step-by-step, the tasks worked correctly."
+      ],
+      "metadata": {
+        "id": "F5JONVDqc4IA"
+      }
+    }
+  ]
+}
