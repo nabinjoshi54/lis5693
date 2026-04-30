@@ -23,4 +23,28 @@ These are three search queries we used:
 1. battery AND energy storage AND lithium ; The catergory 'battery' is labelled for this search query. It has 608 rows. 
 2. space AND satellite AND spacecraft ; The catergory 'space' is labelled for this search query. It also has 608 rows.
 3. text mining AND materials science AND battery ; The catergory 'text_mining_materials' is labelled for this search query. It only has 184 rows.
-Search QueryCategory LabelDocumentsbattery AND energy storage AND lithiumbattery608space AND satellite AND spacecraftspace608text mining AND materials science AND batterytext_mining_materials184Total1,400
+
+Dataset Details
+
+Text column 'Abstract'  is the primary text used for all analysis. Similarly, label column 'category' is used as the target variable for ML classification.
+Note on class imbalance: text_mining_materials has fewer documents (184) than the other two categories (608 each), reflecting its niche nature. This was handled using class_weight='balanced' in all ML models.
+
+Methods
+
+Text Preprocessing
+Raw abstracts were cleaned through a 7-step pipeline:
+
+Lowercasing
+Number removal
+Punctuation removal
+Tokenization
+Stopword removal (standard English + custom academic stopwords)
+Lemmatization (WordNetLemmatizer)
+
+Text Analysis Method 1: Topic Modeling (LDA)
+
+Tool: Gensim LDA + pyLDAvis
+Why chosen: LDA directly mirrors the Tshitoyan et al. (2019) approach — extracting latent thematic structure from scientific abstracts without supervision. It answers what themes exist across three research domains and is ideal for structured, content-rich scientific text.
+Models trained: 5, 10, and 15 topics compared using coherence score (c_v)
+Best model: 10 topics (coherence = 0.4883)
+Result: 10 topics mapped cleanly onto the three dataset categories without any labels provided
