@@ -73,9 +73,26 @@ SVM (LinearSVC)    0.979    0.009    2
 
 Random Forest    0.965    0.011    3
 
-
 Train/test split: 80/20 with stratification
 Evaluation: 5-fold cross-validation, classification report, confusion matrix
 Best classifier: Logistic Regression (highest CV F1 macro = 0.980)
 
+Key Results
 
+Finding          Result
+
+Overall test accuracy        99% (all three models)
+
+Best classifierLogistic         Regression (F1 = 0.980)
+
+Space classification          Perfect — 0 errors across all models
+
+LDA best model            10 topics (coherence = 0.4883)
+
+Overall sentiment          83.2% positive, mean compound = 0.574
+
+Battery sentiment          0.751 (highest)
+
+Space sentiment            0.351 (lowest — risk-aware reporting culture)
+
+Total misclassifications            3 out of 280 test documents
