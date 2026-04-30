@@ -64,10 +64,15 @@ Output: 1,400 × 5,000 numerical matrix
 
 Machine Learning (Task 2)
 Three supervised classifiers trained and compared:
+
 Model    CV F1 Macro    Std    Rank
+
 Logistic Regression    0.9800    .011    1
+
 SVM (LinearSVC)    0.979    0.009    2
+
 Random Forest    0.965    0.011    3
+
 
 Train/test split: 80/20 with stratification
 Evaluation: 5-fold cross-validation, classification report, confusion matrix
