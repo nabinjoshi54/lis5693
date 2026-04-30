@@ -1,8 +1,13 @@
 Text Mining and Machine Learning on Scientific Abstracts
+
 Course: LIS 4/5693 — Text Mining and Machine Learning
+
 Professor: Dr. Manika Lamba, PhD
-Student: Madison Bollinger and Nabin Joshi
+
+Students: Madison Bollinger and Nabin Joshi
+
 Institution: University of Oklahoma
+
 Semester: Spring 2026
 
 Project Overview:
