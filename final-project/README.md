@@ -27,9 +27,10 @@ These are three search queries we used:
 Dataset Details
 
 Text column 'Abstract'  is the primary text used for all analysis. Similarly, label column 'category' is used as the target variable for ML classification.
+
 Note on class imbalance: text_mining_materials has fewer documents (184) than the other two categories (608 each), reflecting its niche nature. This was handled using class_weight='balanced' in all ML models.
 
-Methods
+Methods:
 
 Text Preprocessing
 Raw abstracts were cleaned through a 7-step pipeline:
@@ -44,7 +45,32 @@ Lemmatization (WordNetLemmatizer)
 Text Analysis Method 1: Topic Modeling (LDA)
 
 Tool: Gensim LDA + pyLDAvis
-Why chosen: LDA directly mirrors the Tshitoyan et al. (2019) approach — extracting latent thematic structure from scientific abstracts without supervision. It answers what themes exist across three research domains and is ideal for structured, content-rich scientific text.
+Since Tshitoyan et al. (2019) also used LDA approach — extracting latent thematic structure from scientific abstracts without supervision. It answers what themes exist across three research domains and is ideal for structured, content-rich scientific text.
 Models trained: 5, 10, and 15 topics compared using coherence score (c_v)
 Best model: 10 topics (coherence = 0.4883)
-Result: 10 topics mapped cleanly onto the three dataset categories without any labels provided
+Result: 10 topics mapped cleanly onto the three dataset categories without any labels provided.
+
+Text Analysis Method 2: Sentiment Analysis (VADER)
+
+Tool: NLTK VADER (SentimentIntensityAnalyzer)
+Scientific abstracts frequently make confident, achievement-oriented claims. VADER reveals how researchers write across domains — comparing emotional tone as a complementary perspective to LDA's structural analysis. Network Analysis was not selected because it requires explicit entity relationships not present at the abstract level.
+Result: Battery papers (mean = 0.751) significantly more positive than space papers (mean = 0.351); 83.2% of all abstracts classified as positive
+
+Feature Engineering
+
+Method: TF-IDF (Term Frequency-Inverse Document Frequency)
+Settings: 5,000 features, unigrams + bigrams, sublinear TF normalization
+Output: 1,400 × 5,000 numerical matrix
+
+Machine Learning (Task 2)
+Three supervised classifiers trained and compared:
+Model    CV F1 Macro    Std    Rank
+Logistic Regression    0.9800    .011    1
+SVM (LinearSVC)    0.979    0.009    2
+Random Forest    0.965    0.011    3
+
+Train/test split: 80/20 with stratification
+Evaluation: 5-fold cross-validation, classification report, confusion matrix
+Best classifier: Logistic Regression (highest CV F1 macro = 0.980)
+
+
