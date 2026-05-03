@@ -8,7 +8,7 @@
 
 ---
 
-# 📑 Contents
+# Contents
 
 1. Project Overview
 2. Dataset
@@ -164,7 +164,7 @@ This reflects overlapping terminology in research literature.
 
 # 7. Outputs and Repository Structure
 
-### 📂 outputs/
+### outputs/
 
 Contains model results:
 
@@ -173,7 +173,7 @@ Contains model results:
 * model3_svm_predictions.csv
 * classification reports
 
-### 📂 charts/
+### charts/
 
 Contains visualizations:
 
@@ -184,11 +184,11 @@ Contains visualizations:
 * sentiment analysis
 * model comparison
 
-### 📂 notebooks/
+### notebooks/
 
 * final_project.ipynb (fully annotated)
 
-### 📂 dataset/
+### dataset/
 
 * final_dataset.csv
 
