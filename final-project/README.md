@@ -16,6 +16,7 @@ This project applies text mining and machine learning techniques to 1,400 schola
 
 ## Reference to the article: 
 Tshitoyan, V., Dagdelen, J., Weston, L., Dunn, A., Rong, Z., Kononova, O., ... & Jain, A. (2019). Unsupervised word embeddings capture latent knowledge from materials science literature. Nature, 571(7763), 95–98.
+
 DOI: https://doi.org/10.1038/s41586-019-1335-8 
 
 ## Dataset Source
