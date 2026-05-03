@@ -86,29 +86,20 @@ Train/test split: 80/20 with stratification
 Evaluation: 5-fold cross-validation, classification report, confusion matrix
 Best classifier: Logistic Regression (highest CV F1 macro = 0.980)
 
+## Machine Learning (Task 2)
+
 Three supervised classifiers were trained and compared:
 
+| Model                | CV F1 Macro | Std   | Rank |
+|---------------------|------------|-------|------|
+| Logistic Regression | 0.980      | 0.011 | 1    |
+| SVM (LinearSVC)     | 0.979      | 0.009 | 2    |
+| Random Forest       | 0.965      | 0.011 | 3    |
 
-
-Model
-CV F1 Macro
-Std
-Rank
-Logistic Regression
-0.980
-0.011
-1
-SVM (LinearSVC)
-0.979
-0.009
-2
-Random Forest
-0.965
-0.011
-3
-Train/test split: 80/20 with stratification
-Evaluation: 5-fold cross-validation, classification report, confusion matrix
-Best classifier: Logistic Regression (highest CV F1 macro = 0.980)
+- **Train/test split:** 80/20 with stratification  
+- **Evaluation:** 5-fold cross-validation, classification report, confusion matrix  
+- **Best classifier:** Logistic Regression (highest CV F1 macro = **0.980**)  
+
 
 Key Results
 
