@@ -6,7 +6,7 @@ Professor: Dr. Manika Lamba, PhD
 
 Students: Madison Bollinger and Nabin Joshi
 
-Institution: University of Oklahoma
+University of Oklahoma, Norman
 
 Semester: Spring 2026
 
