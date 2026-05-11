@@ -1,9 +1,13 @@
 # Text Mining and Machine Learning on Scientific Abstracts
 
 **Course:** LIS 4/5693 — Text Mining and Machine Learning
+
 **Instructor:** Dr. Manika Lamba
+
 **Students:** Madison Bollinger, Nabin Joshi
+
 **University:** University of Oklahoma
+
 **Semester:** Spring 2026
 
 ---
@@ -155,7 +159,7 @@ Three classifiers were trained:
 Misclassifications occur mainly between:
 
 ```
-battery ↔ text_mining_materials
+battery = text_mining_materials
 ```
 
 This reflects overlapping terminology in research literature.
