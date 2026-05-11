@@ -218,6 +218,8 @@ Although the project achieved strong classification performance, several limitat
 * Sentiment analysis using VADER may not fully capture nuanced scientific writing because research abstracts are generally technical and neutral in tone.
 * Topic interpretation in LDA still requires human judgment and domain expertise.
 
+---
+
 # 10. Future Work
 
 Potential future improvements include:
@@ -227,6 +229,8 @@ Potential future improvements include:
 * Expanding the dataset using larger scholarly databases
 * Developing interactive dashboards for topic exploration
 * Applying the workflow to real-time scientific literature monitoring
+
+---
 
 # 11. Reference
 
