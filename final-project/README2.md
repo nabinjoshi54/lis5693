@@ -49,6 +49,8 @@ Scientific literature is growing rapidly across interdisciplinary domains such a
 
 This project demonstrates how Natural Language Processing (NLP) and Machine Learning (ML) techniques can automatically extract meaningful patterns, discover hidden research themes, and classify scientific abstracts into research domains. The project also highlights how unsupervised learning methods such as Latent Dirichlet Allocation (LDA) can uncover latent semantic structures without requiring labeled training data.
 
+---
+
 # 3. Dataset
 
 **Source:** Lens.org (open-access scholarly database)
