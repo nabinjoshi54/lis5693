@@ -166,7 +166,7 @@ This reflects overlapping terminology in research literature.
 
 ---
 
-# 7. Outputs and Repository Structure
+# 7. Outputs
 
 ### outputs/
 
