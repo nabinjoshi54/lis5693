@@ -1,4 +1,4 @@
-# Text Mining and Machine Learning on Scientific Abstracts
+# Discovering Patterns in Scientific Literature Abstracts using Text Mining and Machine Learning
 
 **Course:** LIS 4/5693 — Text Mining and Machine Learning
 
